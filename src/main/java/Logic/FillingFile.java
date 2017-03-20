@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.nio.CharBuffer;
 import java.util.Hashtable;
 
 /**
@@ -50,20 +49,16 @@ public class FillingFile {
         }
     }
 
-    public static Hashtable<Integer, String> readFile() {
+    public static Hashtable<Integer, String> readFile() throws IOException {
         FileReader FR;
-        StringBuffer json =new StringBuffer();
-        try {
-            FR = new FileReader(new File("GF7.txt").getAbsolutePath());
-            int c;
-            while ((c = FR.read()) != -1) {
-               json.append((char) c);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        StringBuffer json = new StringBuffer();
+
+        FR = new FileReader(new File("GF7.txt").getAbsolutePath());
+        int c;
+        while ((c = FR.read()) != -1) {
+            json.append((char) c);
         }
+        FR.close();
         System.out.println(json);
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();

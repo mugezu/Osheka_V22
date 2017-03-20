@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * Created by Roman on 17.03.2017.
  */
-public class DrawSquareThread implements Runnable {
+/*public class DrawSquareThread implements Runnable {
     Graphics g;
     int x;
     int y;
@@ -26,4 +26,4 @@ public class DrawSquareThread implements Runnable {
     public void run() {
         Matrix.drawSquare(g,x,y,size,value);
     }
-}
+}*/

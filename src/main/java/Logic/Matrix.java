@@ -2,7 +2,7 @@ package Logic;
 
 import Exception.ExceptionSize;
 import Exception.ExceptionValue;
-import Interface.DrawSquareThread;
+
 
 import java.awt.*;
 import java.util.Random;

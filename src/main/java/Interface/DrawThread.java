@@ -41,7 +41,7 @@ public class DrawThread implements Runnable {
                 while (flag) {
                     matrixRes = Logic.Matrix.multiplication(matrix, A, 7);
                     matrix=Logic.Matrix.multiplication(matrixRes, B, 7);
-                    Matrix.drawMatrix(g, matrix, 200, 500, 100);
+                    Matrix.drawMatrix(g, matrix, 100, 600, 100);
           /*  long sek=24;
             long mil=1000;
             try {

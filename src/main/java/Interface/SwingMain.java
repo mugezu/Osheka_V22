@@ -22,7 +22,7 @@ public class SwingMain extends JFrame {
     private static Hashtable<Integer, String> table;
     private static int n;
     private JFileChooser fileChooser = null;
-    private final static int P = 7;
+    private final static int P =7;
     private static int[][] matrix;
     private static int[][] A;
     private static int[][] B;
@@ -31,9 +31,13 @@ public class SwingMain extends JFrame {
     Runnable r;
 
     public static void main(String[] args) {
-        table = FillingFile.readFile();
-        System.out.println(table.get(4).substring(2, 3));
-        //System.out.println(table);
+        try {
+            table = FillingFile.readFile();
+        } catch (IOException e) {
+            int reply = JOptionPane.showConfirmDialog(null, "Файл GF7.txt не найден", "Ошибка", JOptionPane.CLOSED_OPTION);
+            e.printStackTrace();
+            return;
+        }
         try {
             new SwingMain();
         } catch (IOException e) {
@@ -46,7 +50,7 @@ public class SwingMain extends JFrame {
         setTitle("Псевдослучайная генерация радуги");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addComponents(getContentPane());
-        setPreferredSize(new Dimension(700, 600));
+        setPreferredSize(new Dimension(700, 700));
         pack();
         setVisible(true);
     }
@@ -110,11 +114,23 @@ public class SwingMain extends JFrame {
             }
         });
         menuButton.addActionListener(new ActionListenerAddList(menuFunction, menuButton));
+
+        final JButton helpButton = new JButton("Справка");
+        final JPopupMenu helpFunction = new JPopupMenu("Справка");
+
+        helpFunction.add(new AbstractAction("Об авторе") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int reply = JOptionPane.showConfirmDialog(null, "Автор продукта ст. Группи КИТ-64 \nОшека Роман\nВсе права защищены", "Об авторе", JOptionPane.CLOSED_OPTION);
+            }
+        });
+        helpButton.addActionListener(new ActionListenerAddList(helpFunction,helpButton));
         JComponent res = new JComponent() {
         };
         res.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         res.add(fileButton);
         res.add(menuButton);
+        res.add(helpButton);
         return res;
     }
 
