@@ -1,7 +1,6 @@
 package Interface;
 
 import Logic.FillingFile;
-import Logic.Matrix;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -12,8 +11,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Random;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Created by Roman on 17.03.2017.
@@ -61,6 +58,10 @@ public class SwingMain extends JFrame {
         fileChooser = new JFileChooser();
         toolBar.add(createButtonWithMenu());
         contentPane.add(toolBar, BorderLayout.NORTH);
+        JLabel jLabel= new JLabel();
+        jLabel.setName("CountRefresh");
+        contentPane.add(jLabel,BorderLayout.SOUTH);
+       // System.out.println(contentPane.getComponent(0).getName());
     }
 
     private JComponent createButtonWithMenu() {
