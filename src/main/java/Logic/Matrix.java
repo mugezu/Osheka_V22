@@ -102,6 +102,14 @@ public class Matrix {
             }*/
         // workQueue.
     }
+    public static String toString(int[][] matrix){
+        StringBuffer sb=new StringBuffer();
+        for (int i = 0; i < matrix.length; i++,sb.append(System.lineSeparator()))
+            for (int j = 0; j < matrix[i].length; j++) {
+            sb.append(matrix[i][j]+" ");
+            }
+            return sb.toString();
+    }
 
     public static void Check(int[][] matrix) throws ExceptionSize, ExceptionValue {
         for (int i = 1; i < matrix.length; i++)

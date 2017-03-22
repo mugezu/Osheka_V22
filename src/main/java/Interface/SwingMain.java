@@ -19,13 +19,15 @@ public class SwingMain extends JFrame {
     private static Hashtable<Integer, String> table;
     private static int n;
     private JFileChooser fileChooser = null;
-    private final static int P =7;
+    private final static int P = 7;
     private static int[][] matrix;
     private static int[][] A;
     private static int[][] B;
     private static boolean flag = false;
+    DrawThread drawThread;
     Thread t;
     Runnable r;
+    String data;
 
     public static void main(String[] args) {
         try {
@@ -58,19 +60,19 @@ public class SwingMain extends JFrame {
         fileChooser = new JFileChooser();
         toolBar.add(createButtonWithMenu());
         contentPane.add(toolBar, BorderLayout.NORTH);
-        JLabel jLabel= new JLabel();
+        JLabel jLabel = new JLabel();
         jLabel.setName("CountRefresh");
-        contentPane.add(jLabel,BorderLayout.SOUTH);
-       // System.out.println(contentPane.getComponent(0).getName());
+        contentPane.add(jLabel, BorderLayout.SOUTH);
+        // System.out.println(contentPane.getComponent(0).getName());
     }
 
     private JComponent createButtonWithMenu() {
         final JButton fileButton = new JButton("Файл");
         final JPopupMenu menuFile = new JPopupMenu("Файл");
-        AbstractAction actionSaveFile = new ActionSaveFile("Сохранить в файл логи программы", fileChooser, SwingMain.this);
+        ActionSaveFile actionSaveFileLog = new ActionSaveFile("Сохранить в файл логи программы", fileChooser, SwingMain.this);
+        ActionSaveFile actionSaveFile = new ActionSaveFile("Сохранить результат в файл", fileChooser, SwingMain.this);
         menuFile.add(actionSaveFile);
-        actionSaveFile = new ActionSaveFile("Сохранить результат в файл", fileChooser, SwingMain.this);
-        menuFile.add(actionSaveFile);
+        menuFile.add(actionSaveFileLog);
         fileButton.addActionListener(new ActionListenerAddList(menuFile, fileButton));
         final JButton menuButton = new JButton("Опции");
         final JPopupMenu menuFunction = new JPopupMenu("Опции");
@@ -80,7 +82,8 @@ public class SwingMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (flag == false) {
                     if (matrix != null) {
-                        r = new DrawThread(matrix,A,B, P, getContentPane());
+                        drawThread = new DrawThread(matrix, A, B, P, getContentPane());
+                        r = drawThread;
                         t = new Thread(r);
                         t.start();
                         flag = true;
@@ -93,6 +96,8 @@ public class SwingMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (flag == true) ;
                 t.stop();
+                data = drawThread.getJson().toString();
+                actionSaveFile.setData(data);
                 flag = false;
             }
         });
@@ -125,7 +130,7 @@ public class SwingMain extends JFrame {
                 int reply = JOptionPane.showConfirmDialog(null, "Автор продукта ст. Группи КИТ-64 \nОшека Роман\nВсе права защищены", "Об авторе", JOptionPane.CLOSED_OPTION);
             }
         });
-        helpButton.addActionListener(new ActionListenerAddList(helpFunction,helpButton));
+        helpButton.addActionListener(new ActionListenerAddList(helpFunction, helpButton));
         JComponent res = new JComponent() {
         };
         res.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -160,15 +165,15 @@ public class SwingMain extends JFrame {
                 }
             }
 
-        boolean fl=false;
+        boolean fl = false;
 
         matrix = new int[n][n];
         for (int i = 0; i < n; i++)
             for (int j = 0; j < n; j++) {
                 matrix[i][j] = random.nextInt(P);
-                if (matrix[i][j] != 0 && fl==false) fl=true;
+                if (matrix[i][j] != 0 && fl == false) fl = true;
             }
-        if (fl==false) matrix[0][0]=1;
+        if (fl == false) matrix[0][0] = 1;
 
     }
 
