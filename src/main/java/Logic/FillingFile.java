@@ -8,17 +8,16 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.Hashtable;
 
-/**
- * Created by Roman on 18.03.2017.
- */
 public class FillingFile {
+
+    private static Hashtable<Integer, String> poli = new Hashtable<Integer, String>();
+
     public static void main(String[] args) {
         FillingFile f = new FillingFile();
         f.addTable();
         f.writeFile();
     }
 
-    private static Hashtable<Integer, String> poli = new Hashtable<Integer, String>();
 
     public void addTable() {
         poli.put(2, "03");

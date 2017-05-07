@@ -5,9 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by Roman on 17.03.2017.
- */
 public class ActionListenerAddList implements ActionListener {
     JPopupMenu menu;
     JButton button;

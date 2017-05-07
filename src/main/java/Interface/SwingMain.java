@@ -1,14 +1,19 @@
 package Interface;
 
 import Logic.FillingFile;
+import Logic.Matrix;
+import Exception.ExceptionSize;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Random;
 
@@ -26,8 +31,9 @@ public class SwingMain extends JFrame {
     private static boolean flag = false;
     DrawThread drawThread;
     Thread t;
-    Runnable r;
     String data;
+    private static Checkbox checkbox;
+    static int i = 0;
 
     public static void main(String[] args) {
         try {
@@ -49,62 +55,38 @@ public class SwingMain extends JFrame {
         setTitle("Псевдослучайная генерация радуги");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         addComponents(getContentPane());
-        setPreferredSize(new Dimension(700, 700));
+        setPreferredSize(new Dimension(800, 700));
         pack();
         setVisible(true);
     }
 
     private void addComponents(Container contentPane) throws IOException {
         contentPane.setLayout(new BorderLayout());
+
         JToolBar toolBar = new JToolBar();
         fileChooser = new JFileChooser();
-        toolBar.add(createButtonWithMenu());
         contentPane.add(toolBar, BorderLayout.NORTH);
         JLabel jLabel = new JLabel();
         jLabel.setName("CountRefresh");
         contentPane.add(jLabel, BorderLayout.SOUTH);
+        toolBar.add(createButtonWithMenu());
         // System.out.println(contentPane.getComponent(0).getName());
     }
 
     private JComponent createButtonWithMenu() {
+        checkbox = new Checkbox("Пошаговая работа");
         final JButton fileButton = new JButton("Файл");
         final JPopupMenu menuFile = new JPopupMenu("Файл");
-        ActionSaveFile actionSaveFileLog = new ActionSaveFile("Сохранить в файл логи программы", fileChooser, SwingMain.this);
         ActionSaveFile actionSaveFile = new ActionSaveFile("Сохранить результат в файл", fileChooser, SwingMain.this);
         menuFile.add(actionSaveFile);
-        menuFile.add(actionSaveFileLog);
         fileButton.addActionListener(new ActionListenerAddList(menuFile, fileButton));
         final JButton menuButton = new JButton("Опции");
         final JPopupMenu menuFunction = new JPopupMenu("Опции");
 
-        menuFunction.add(new AbstractAction("Старт") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (flag == false) {
-                    if (matrix != null) {
-                        drawThread = new DrawThread(matrix, A, B, P, getContentPane());
-                        r = drawThread;
-                        t = new Thread(r);
-                        t.start();
-                        flag = true;
-                    }
-                }
-            }
-        });
-        menuFunction.add(new AbstractAction("Стоп") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (flag == true) ;
-                t.stop();
-                data = drawThread.getJson().toString();
-                actionSaveFile.setData(data);
-                flag = false;
-            }
-        });
-
         menuFunction.add(new AbstractAction("Ввести степень многочлена") {
             @Override
             public void actionPerformed(ActionEvent e) {
+                i = 0;
                 JTextField textArea = new JTextField();
                 JLabel label = new JLabel();
                 label.setText("Введите степень многочлена");
@@ -119,8 +101,92 @@ public class SwingMain extends JFrame {
                 }
             }
         });
-        menuButton.addActionListener(new ActionListenerAddList(menuFunction, menuButton));
+        final JButton showMSR = new JButton("Показать матрицу");
+        final JPopupMenu showMSRMenu = new JPopupMenu("Показать матрицу");
 
+        showMSRMenu.add(new AbstractAction("A") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMatrix(A,"Матрица А");
+            }
+        });
+        showMSRMenu.add(new AbstractAction("В") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMatrix(B,"Матрица В");
+            }
+        });
+        showMSRMenu.add(new AbstractAction("Текущего состояния") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMatrix(matrix,"Матрица текущего состояния");
+            }
+        });
+
+        showMSR.addActionListener(new ActionListenerAddList(showMSRMenu, showMSR));
+
+        menuFunction.add(new AbstractAction("Старт") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (checkbox.getState() == false)
+                    if (flag == false) {
+                        if (matrix != null) {
+                            drawThread = new DrawThread(matrix, A, B, P, getContentPane());
+                            t = new Thread(drawThread);
+                            t.start();
+                            flag = true;
+                        }
+                    }
+            }
+        });
+
+        menuFunction.add(new AbstractAction("Стоп") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                action(actionSaveFile);
+            }
+        });
+
+
+        JButton nextStep = new JButton("Следующй шаг");
+        JLabel label = (JLabel) getContentPane().getComponent(1);
+        StringBuffer json = new StringBuffer();
+        nextStep.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (checkbox.getState() == true) {
+                    int[][] matrixRes;
+                    json.append("Matrix " + matrix.length + "x" + matrix[0].length).append(" GF(" + P + ")" + System.lineSeparator());
+                    try {
+                        matrixRes = Logic.Matrix.multiplication(A, matrix, P);
+                        matrix = Logic.Matrix.multiplication(matrixRes, B, P);
+                        Date date = new Date(System.currentTimeMillis());
+                        json.append(i + ": " + date + System.lineSeparator());
+                        json.append(Matrix.toString(matrix));
+                        Matrix.drawMatrix(getGraphics(), matrix, 100, 600, 100);
+                        label.setText("Итерация: " + i);
+                        actionSaveFile.setData(json.toString());
+                        i++;
+                    } catch (ExceptionSize exceptionSize) {
+                        exceptionSize.printStackTrace();
+                        return;
+                    }
+                }
+            }
+        });
+
+        checkbox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                getGraphics().clearRect(0, 70, 650, 600);
+                if (checkbox.getState() == true) {
+                    action(actionSaveFile);
+                }
+                Matrix.drawMatrix(getGraphics(), matrix, 100, 600, 100);
+            }
+        });
+        menuFunction.add(checkbox);
+        menuButton.addActionListener(new ActionListenerAddList(menuFunction, menuButton));
         final JButton helpButton = new JButton("Справка");
         final JPopupMenu helpFunction = new JPopupMenu("Справка");
 
@@ -136,11 +202,20 @@ public class SwingMain extends JFrame {
         res.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         res.add(fileButton);
         res.add(menuButton);
+        res.add(showMSR);
         res.add(helpButton);
+        res.add(nextStep);
         return res;
     }
 
-    public void GenerateMatrix(int n) {
+    private void showMatrix(int[][] matrix, String name){
+        JTextArea label = new JTextArea();
+        label.setText(Matrix.toString(matrix) );
+        JComponent[] inputs = {label};
+        JOptionPane.showConfirmDialog(null, inputs, name, JOptionPane.OK_OPTION);
+    }
+
+    private void GenerateMatrix(int n) {
         Random random = new Random();
         String binKod = table.get(n);
         A = new int[n][n];
@@ -175,6 +250,14 @@ public class SwingMain extends JFrame {
             }
         if (fl == false) matrix[0][0] = 1;
 
+    }
+
+    private void action(ActionSaveFile actionSaveFile) {
+        if (flag == true)
+        t.stop();
+        data = drawThread.getJson().toString();
+        actionSaveFile.setData(data);
+        flag = false;
     }
 
     public void saveFile(String path, Object saveObject) {

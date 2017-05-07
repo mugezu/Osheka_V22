@@ -12,16 +12,12 @@ import java.io.IOException;
 public class ActionSaveFile extends AbstractAction {
     private JFileChooser fileChooser;
     private JFrame frame;
-
-    public String getData() {
-        return data;
-    }
+    String data;
 
     public void setData(String data) {
         this.data = data;
     }
 
-    String data;
 
     public ActionSaveFile(String name, JFileChooser fileChooser, JFrame frame) {
         super(name);
@@ -36,15 +32,14 @@ public class ActionSaveFile extends AbstractAction {
         int result = fileChooser.showSaveDialog(frame);
         // Если файл выбран, то представим его в сообщении
         if (result == JFileChooser.APPROVE_OPTION) {
-            String filePath=fileChooser.getSelectedFile()+".txt";
+            String filePath = fileChooser.getSelectedFile() + ".txt";
             FileWriter fileWriter = null;
             try {
-                fileWriter= new FileWriter(new File(filePath),false);
+                fileWriter = new FileWriter(new File(filePath), false);
                 fileWriter.write(data);
             } catch (IOException e1) {
                 e1.printStackTrace();
-            }
-            finally {
+            } finally {
                 try {
                     fileWriter.close();
                 } catch (IOException e1) {

@@ -23,11 +23,11 @@ public class WorkQueue
         }
     }
 
-    public boolean isAliveAll(){
+    /*public boolean isAliveAll(){
         for (int i=0;i<nThreads;i++)
             if (threads==null) return false;
         return true;
-    }
+    }*/
 
     public void execute(Runnable r) {
         synchronized(queue) {

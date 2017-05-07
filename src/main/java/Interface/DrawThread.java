@@ -3,13 +3,9 @@ package Interface;
 import Logic.Matrix;
 import Exception.ExceptionSize;
 import Logic.WorkQueue;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -23,7 +19,7 @@ public class DrawThread implements Runnable {
     Graphics g;
     Container container;
     boolean flag;
-    static WorkQueue workQueue;
+    //   static WorkQueue workQueue;
     StringBuffer json = new StringBuffer();
 
     public StringBuffer getJson() {
@@ -38,15 +34,15 @@ public class DrawThread implements Runnable {
         flag = true;
         this.container = container;
         this.g = container.getGraphics();
-        workQueue = new WorkQueue(5);
+        //  workQueue = new WorkQueue(5);
     }
 
     @Override
     public void run() {
         int[][] matrixRes;
         JLabel label = (JLabel) container.getComponent(1);
-        container.getGraphics().clearRect(0, 50, container.getWidth(), container.getHeight());
-        json.append("Matrix "+matrix.length+"x"+matrix[0].length).append(" GF("+P+")"+System.lineSeparator());
+        container.getGraphics().clearRect(0, 50, 600, 600);
+        json.append("Matrix " + matrix.length + "x" + matrix[0].length).append(" GF(" + P + ")" + System.lineSeparator());
         int i = 0;
         long s = System.currentTimeMillis();
         try {
@@ -59,7 +55,7 @@ public class DrawThread implements Runnable {
                 json.append(a);
                 // Matrix.drawMatrixThread(g, matrix, 100, 600, 100, workQueue);
                 Matrix.drawMatrix(g, matrix, 100, 600, 100);
-                label.setText("Итерация: " + i + "  Время выполнения: " + (double) (System.currentTimeMillis() - s) / 1000);
+                label.setText("Итерация: " + i + "  Время выполнения: " + (double) (System.currentTimeMillis() - s) / 1000+" Кадров в секунду: "+(int)(i/((double)(System.currentTimeMillis() - s) / 1000)));
                 i++;
             }
         } catch (ExceptionSize exceptionSize) {
