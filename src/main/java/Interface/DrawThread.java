@@ -2,8 +2,6 @@ package Interface;
 
 import Logic.Matrix;
 import Exception.ExceptionSize;
-import Logic.WorkQueue;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Date;
@@ -16,17 +14,13 @@ public class DrawThread implements Runnable {
     int[][] A;
     int[][] B;
     int P;
+    int T;
     Graphics g;
     Container container;
     boolean flag;
-    //   static WorkQueue workQueue;
     StringBuffer json = new StringBuffer();
 
-    public StringBuffer getJson() {
-        return json;
-    }
-
-    public DrawThread(int[][] matrix, int[][] A, int[][] B, int P, Container container) {
+    public DrawThread(int[][] matrix, int[][] A, int[][] B, int P, Container container,int T) {
         this.matrix = matrix;
         this.A = A;
         this.B = B;
@@ -34,7 +28,7 @@ public class DrawThread implements Runnable {
         flag = true;
         this.container = container;
         this.g = container.getGraphics();
-        //  workQueue = new WorkQueue(5);
+        this.T=T;
     }
 
     @Override
@@ -53,9 +47,8 @@ public class DrawThread implements Runnable {
                 String a = Matrix.toString(matrix);
                 json.append(i + ": " + date + System.lineSeparator());
                 json.append(a);
-                // Matrix.drawMatrixThread(g, matrix, 100, 600, 100, workQueue);
                 Matrix.drawMatrix(g, matrix, 100, 600, 100);
-                label.setText("Итерация: " + i + "  Время выполнения: " + (double) (System.currentTimeMillis() - s) / 1000+" Кадров в секунду: "+(int)(i/((double)(System.currentTimeMillis() - s) / 1000)));
+                label.setText("Итерация: " + i + "  Время выполнения: " + (double) (System.currentTimeMillis() - s) / 1000+" Кадров в секунду: "+(int)(i/((double)(System.currentTimeMillis() - s) / 1000))+" Период(экс)="+T);
                 i++;
             }
         } catch (ExceptionSize exceptionSize) {
